@@ -1,5 +1,5 @@
 // BIENVENIDA Y MENSAJE INICIAL
-const result = alert('Bienvenido al simulador de compras de "La Tiendita de la Esquina - Chile", para iniciar tu proceso de compra, por favor ingresa los siguientes datos.');
+alert('Bienvenido al simulador de compras de "La Tiendita de la Esquina - Chile", para iniciar tu proceso de compra, por favor ingresa los siguientes datos.');
 
 const buyData = {};
 
