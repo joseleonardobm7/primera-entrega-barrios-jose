@@ -1,3 +1,13 @@
+.bgColorPrimary {
+  background: linear-gradient(#7aa9f0, #94b4f8, #7aa9f0);
+}
+.bgColorSecondary {
+  background-color: #3f79f7;
+}
+.bgColorTerciary {
+  background-color: #7badf8;
+}
+
 .navbar {
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.18);
 }
@@ -68,4 +78,22 @@
 .navbar form input[type="search"]:focus {
   background: #fff;
   box-shadow: none;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  transition-delay: 0s; /* Modificar aquí el tiempo de espera, en segundos */
 }
