@@ -180,8 +180,35 @@ class shoppingCartClass {
   }
 }
 
+class wishListClass {
+  constructor() {
+    this.products = [];
+  }
+  manageProduct(id) {
+    const product = this.products.find((p) => p === id);
+    if (product) this.products = this.products.filter((p) => p !== id);
+    else this.products.push(id);
+  }
+  getTotalProducts() {
+    return this.products.length;
+  }
+}
+
+const renderShoppingCartQty = () => {
+  const shoppingCartQty = document.getElementById("shopping-cart-qty");
+  shoppingCartQty.innerHTML = shoppingCart.getTotalProducts();
+};
+
+const renderWishListQty = () => {
+  const wishListQty = document.getElementById("wishlist-qty");
+  wishListQty.innerHTML = wishlist.getTotalProducts();
+};
+
 // INICIALIZANDO CARRITO
 const shoppingCart = new shoppingCartClass();
+
+// INICIALIZAR WISHLIST
+const wishlist = new wishListClass();
 
 // LISTAR OPCIONES DE PRODUCTOS
 const listProducts = (showProducts) => {
@@ -202,6 +229,7 @@ const renderProducts = (typeSelected) => {
     "Frutas y Verduras": (product) => product.type === "frutasVerduras",
     Bebidas: (product) => product.type === "bebidas",
     Carrito: (product) => shoppingCart.listIdProducts().includes(product._id),
+    Favoritos: (product) => wishlist.products.includes(product._id),
   };
   const selectedProducts = products.filter(types[typeSelected]);
   selectedProducts.forEach((product) => {
@@ -244,7 +272,23 @@ const renderProducts = (typeSelected) => {
             </p>
           </div>
           <div class="col-2">
-            <i class="bi bi-bookmark-plus fs-2 text-success me-4"></i>
+            <a class="text-decoration-none" href="#" onclick="manageProductsWishList(event,${
+              product._id
+            })">
+              <i class="bi
+                bi-bookmark-${
+                  !wishlist.products.includes(product._id) ? "plus" : "dash"
+                } 
+                fs-2 
+                text-${
+                  !wishlist.products.includes(product._id)
+                    ? "success"
+                    : "danger"
+                }
+                me-4"
+              >
+              </i>
+            </a>
           </div>
         </div>
       </div>
@@ -294,8 +338,12 @@ const renderProducts = (typeSelected) => {
   </div>\n`;
   });
   if (productList === "")
-    productList = "<div> No existen productos agregados al carrito </div>";
+    productList = `<div> No existen productos agregados ${
+      renderedType === "Favoritos" ? "como favoritos." : "al carrito"
+    } </div>`;
   container.innerHTML = productList;
+  renderShoppingCartQty();
+  renderWishListQty();
 };
 
 renderProducts(renderedType);
@@ -450,12 +498,19 @@ const closeLoginAddModal = () => {
 
 const modifyQuantity = (id, quantity) => {
   shoppingCart.addProduct(id, quantity);
-  console.log(shoppingCart.listCart());
   // Renderizar los productos actualizados
   renderProducts(renderedType);
 };
 
 const changeRenderedType = (type) => {
   renderedType = type;
+  renderProducts(renderedType);
+};
+
+const manageProductsWishList = (event, id) => {
+  // Detener comportamiente de href
+  event.preventDefault();
+  wishlist.manageProduct(id);
+  // Renderizar los productos actualizados
   renderProducts(renderedType);
 };

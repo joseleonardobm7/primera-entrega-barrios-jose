@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
   </head>
   <body class="bgColorPrimary">
-    <nav class="navbar navbar-expand-md bg-light bgColorPrimary">
+    <nav class="navbar navbar-expand-md bg-light bgColorPrimary sticky-top">
       <div class="container-fluid d-flex justify-content-center">
         <a class="navbar-brand" href="#">
           <img src="assets/img/logo.png" alt="Logo La Tiendita" />
@@ -107,26 +107,43 @@
                   ></i>
                 </a>
               </div>
-              <div class="wishlist">
+              <div class="wishlist position-relative">
                 <a class="text-decoration-none" href="#">
                   <i
                     class="bi bi-heart text-black"
                     data-toggle="tooltip"
                     data-placement="top"
                     title="Favoritos"
+                    onclick="changeRenderedType('Favoritos')"
                   ></i>
                 </a>
+                <span
+                  class="badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.4em; width: 60%"
+                  id="wishlist-qty"
+                >
+                  99+
+                  <span class="visually-hidden"> articles in wishlist </span>
+                </span>
               </div>
-              <div class="cart">
+              <div class="cart position-relative">
                 <a class="text-decoration-none" href="#">
                   <i
-                    class="bi bi-cart3 text-black"
+                    class="bi bi-cart3 text-black shopping-cart-icon"
                     data-toggle="tooltip"
                     data-placement="top"
                     title="Ver Carrito"
                     onclick="changeRenderedType('Carrito')"
                   ></i>
                 </a>
+                <span
+                  class="badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="font-size: 0.4em; width: 60%"
+                  id="shopping-cart-qty"
+                >
+                  99+
+                  <span class="visually-hidden"> articles in cart </span>
+                </span>
               </div>
             </div>
           </div>
