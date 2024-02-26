@@ -82,8 +82,35 @@
                 aria-label="Search"
               />
             </form>
-            <div class="user-icons d-flex mb-2">
-              <div class="account-add">
+            <div class="user-icons d-flex mb-2 align-items-center">
+              <div id="user-options" class="dropdown">
+                <button
+                  class="btn bgColorSecondary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Hola Usuario
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <button class="dropdown-item" type="button">
+                      Modificar Datos
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" type="button">
+                      Administrar Direcciones
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" type="button">
+                      Cerrar Sesión
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div id="account-add" class="account-add">
                 <a class="text-decoration-none" href="#">
                   <i
                     class="bi bi-person-add text-black"
@@ -95,7 +122,7 @@
                   ></i>
                 </a>
               </div>
-              <div class="account">
+              <div id="account" class="account">
                 <a class="text-decoration-none" href="#">
                   <i
                     class="bi bi-person text-black"
@@ -122,7 +149,7 @@
                   style="font-size: 0.4em; width: 60%"
                   id="wishlist-qty"
                 >
-                  99+
+                  0
                   <span class="visually-hidden"> articles in wishlist </span>
                 </span>
               </div>
@@ -141,7 +168,7 @@
                   style="font-size: 0.4em; width: 60%"
                   id="shopping-cart-qty"
                 >
-                  99+
+                  0
                   <span class="visually-hidden"> articles in cart </span>
                 </span>
               </div>
@@ -150,6 +177,7 @@
           <div
             class="contact-info d-flex justify-content-end align-items-center pb-2"
           >
+            <span class="pe-2"> Soporte: </span>
             <div class="whatsapp pe-2"><i class="bi bi-whatsapp"></i></div>
             <div class="pe-2">
               <a
@@ -173,7 +201,12 @@
       </div>
     </nav>
     <div class="card w-100">
-      <h5 class="card-header bgColorSecondary">Productos</h5>
+      <div
+        id="title-products"
+        class="card-header bgColorSecondary d-flex justify-content-start"
+      >
+        <h5 class="h2">Productos</h5>
+      </div>
       <div
         id="products-container"
         class="card-body d-flex justify-content-center align-items-start flex-wrap bgColorPrimary"
@@ -204,6 +237,10 @@
               ></button>
             </div>
             <div class="modal-body">
+              <p>
+                Bienvenido a "La Tiendita de la Esquina - Chile", inicia sesión
+                para poder comprar.
+              </p>
               <div class="form-group">
                 <label for="email-user"> Dirección de Correo </label>
                 <input
@@ -276,7 +313,7 @@
             </div>
             <div class="modal-body">
               <div class="form-group">
-                <label for="name-user"> Nombre de Usuario </label>
+                <label for="name-user"> Nombre </label>
                 <input
                   type="text"
                   class="form-control"

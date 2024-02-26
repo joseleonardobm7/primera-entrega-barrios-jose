@@ -4,6 +4,12 @@ let renderedType = "Todos";
 const randomNumber = (inicio, fin) => {
   return Math.floor(Math.random() * fin) + inicio;
 };
+const setLocalStorage = (container, value) => {
+  localStorage.setItem(container, JSON.stringify(value));
+};
+const getLocalStorage = (container) =>
+  JSON.parse(localStorage.getItem(container));
+
 // DEFINIENDO LOS PRODUCTOS DISPONIBLES
 const products = [
   {
@@ -109,7 +115,7 @@ const products = [
 // DEFINIENDO LA CLASE CARRITO DE COMPRAS
 class shoppingCartClass {
   constructor() {
-    this.products = [];
+    this.products = getLocalStorage("shoppingCart") || [];
   }
   addProduct(id, quantity) {
     const existingProduct = products.find((p) => p._id === id);
@@ -147,6 +153,7 @@ class shoppingCartClass {
     } else {
       console.log("No se encontró el Producto con #" + id + "!");
     }
+    setLocalStorage("shoppingCart", this.products);
   }
   listCart() {
     let res = "";
@@ -182,15 +189,36 @@ class shoppingCartClass {
 
 class wishListClass {
   constructor() {
-    this.products = [];
+    this.products = getLocalStorage("wishList") || [];
   }
   manageProduct(id) {
     const product = this.products.find((p) => p === id);
     if (product) this.products = this.products.filter((p) => p !== id);
     else this.products.push(id);
+    setLocalStorage("wishList", this.products);
   }
   getTotalProducts() {
     return this.products.length;
+  }
+}
+
+class usersClass {
+  constructor() {
+    this.users = getLocalStorage("users") || [];
+  }
+  createUser(name, email, password) {
+    this.users.push({
+      _id: new Date(),
+      name,
+      email,
+      password,
+    });
+  }
+  restartPassword(userId, newPassword) {
+    const user = this.users.find((u) => u._id === userId);
+    if (user) {
+      user.password = newPassword;
+    }
   }
 }
 
@@ -210,28 +238,50 @@ const shoppingCart = new shoppingCartClass();
 // INICIALIZAR WISHLIST
 const wishlist = new wishListClass();
 
-// LISTAR OPCIONES DE PRODUCTOS
-const listProducts = (showProducts) => {
-  let res = "";
-  showProducts.forEach((product) => {
-    res += product._id + ".- " + product.name + " - $" + product.price + "\n";
-  });
-  return res;
-};
+// INICIALIZAR USUARIOS
+const users = new usersClass();
 
 // FUNCION PARA RENDERIZAR PRODUCTOS
 const renderProducts = (typeSelected) => {
+  let title = document.getElementById("title-products");
   let container = document.getElementById("products-container");
   let productList = "";
   const types = {
-    Todos: (product) => product,
-    Viveres: (product) => product.type === "viveres",
-    "Frutas y Verduras": (product) => product.type === "frutasVerduras",
-    Bebidas: (product) => product.type === "bebidas",
-    Carrito: (product) => shoppingCart.listIdProducts().includes(product._id),
-    Favoritos: (product) => wishlist.products.includes(product._id),
+    Todos: {
+      title: `<h5 class="h2"> Todos los Productos </h5>`,
+      filter: (product) => product,
+    },
+    Viveres: {
+      title: `<h5 class="h2"> Viveres </h5>`,
+      filter: (product) => product.type === "viveres",
+    },
+    "Frutas y Verduras": {
+      title: `<h5 class="h2"> Frutas y Verduras </h5>`,
+      filter: (product) => product.type === "frutasVerduras",
+    },
+    Bebidas: {
+      title: `<h5 class="h2"> Bebidas </h5>`,
+      filter: (product) => product.type === "bebidas",
+    },
+    Carrito: {
+      title: `
+        <h5 class="h2"> Mi Carrito de Compras $${shoppingCart
+          .getTotalCart()
+          .toLocaleString("de-DE")}</h5>
+        <button type="button" class="btn btn-success ms-2 ${
+          shoppingCart.getTotalCart() > 0 ? "" : "disabled"
+        }"> Procesar Compra </button>
+        `,
+      filter: (product) => shoppingCart.listIdProducts().includes(product._id),
+    },
+    Favoritos: {
+      title: `<h5 class="h2"> Mis Productos Favoritos </h5>`,
+      filter: (product) => wishlist.products.includes(product._id),
+    },
   };
-  const selectedProducts = products.filter(types[typeSelected]);
+  const selectedData = types[typeSelected];
+  const selectedProducts = products.filter(selectedData.filter);
+  const selectedTitle = selectedData.title;
   selectedProducts.forEach((product) => {
     productList += `<div class="d-flex justify-content-center">
     <div class="card border-0 rounded-0 shadow m-2" style="max-width: 18rem;">
@@ -342,98 +392,37 @@ const renderProducts = (typeSelected) => {
       renderedType === "Favoritos" ? "como favoritos." : "al carrito"
     } </div>`;
   container.innerHTML = productList;
+  title.innerHTML = selectedTitle;
   renderShoppingCartQty();
   renderWishListQty();
 };
 
-renderProducts(renderedType);
+// MOSTRAR/OCULTAR MODAL DE INICIO DE SESION
+const loginModal = new bootstrap.Modal(document.getElementById("loginModal"), {
+  backdrop: "static",
+  keyboard: false,
+});
+const showLoginModal = () => loginModal.show();
+const closeLoginModal = () => loginModal.hide();
+
+// MOSTRAR/OCULTAR MODAL DE CREAR USUARIO
+const loginAddModal = new bootstrap.Modal(
+  document.getElementById("loginAddModal"),
+  {
+    backdrop: "static",
+    keyboard: false,
+  }
+);
+const showLoginAddModal = () => loginAddModal.show();
+const closeLoginAddModal = () => loginAddModal.hide();
 
 // BIENVENIDA Y MENSAJE INICIAL
-alert(
-  'Bienvenido al simulador de compras de "La Tiendita de la Esquina - Chile", para iniciar tu proceso de compra, por favor ingresa los siguientes datos.'
-);
-const buyData = {};
 
-// FUNCION PARA INGRESAR NOMBRE
-const nameRequest = () => {
-  const name = prompt("Ingresa tu Nombre");
-  if (!name || name.length < 2) return invalidName(name);
-  buyData.name = name;
-  dniRequest(name);
-};
+// RENDERIZAR PRODUCTOS
+renderProducts(renderedType);
 
-// FUNCION PARA NOMBRE INVALIDO
-const invalidName = (name) => {
-  let message;
-  if (!name) message = "No ingresaste nombre. ";
-  else message = "El nombre ingresado es muy corto. ";
-  const response = prompt(
-    message +
-      " Por favor ingresa una opción: \n 1 -> Ingresar nuevamente el nombre.\n Otro valor -> Cancelar Simulación."
-  );
-  if (response == 1) nameRequest();
-  else return sayBye();
-};
-
-// FUNCION PARA INGRESAR DNI
-const dniRequest = (name) => {
-  const dni = prompt("Hola " + name + " , ingresa tu DNI:");
-  if (!dni) return invalidDni(name);
-  buyData.dni = dni;
-  //productsQuantity();
-  productChoose();
-};
-
-// FUNCION PARA DNI INVALIDO
-const invalidDni = (name) => {
-  const response = prompt(
-    "No ingresaste ningún DNI, por favor ingresa una opción: \n 1 -> Ingresar nuevamente el DNI.\n 2. Comenzar nuevamente el proceso de compra. \n Otro valor -> Cancelar Simulación."
-  );
-  if (response == 1) return dniRequest(name);
-  else if (response == 2) return nameRequest();
-  else return sayBye();
-};
-
-// FUNCION PARA ELEGIR PRODUCTO
-const productChoose = () => {
-  let message = "Ingrese una opción del listado:\n";
-  message += "0.- Finalizar Pedido. \n";
-  message += listProducts(products);
-  const response = parseInt(prompt(message));
-  console.log(response);
-  if (response === 0) {
-    if (shoppingCart.getTotalProducts() > 0) {
-      return processPurchase();
-    } else {
-      console.log("No se puede procesar la compra con el carrito vacío.");
-      return productChoose();
-    }
-  }
-  if (response > 0 && response <= products.length)
-    return quantityChoose(response);
-  alert("Opción Inválida");
-  return productChoose();
-};
-
-// FUNCION PARA ELEGIR CANTIDAD DEL PRODUCTO
-const quantityChoose = (id) => {
-  const product = products.find((p) => p._id === id);
-  const response = parseInt(
-    prompt(
-      "Cuantas unidades de " +
-        product.name +
-        " desea comprar (Cantidad del 1 al 10):"
-    )
-  );
-  const selected = response >= 1 && response <= 10;
-  if (selected) {
-    shoppingCart.addProduct(id, response);
-    return productChoose();
-  } else {
-    alert("Opción Inválida");
-    return quantityChoose(id);
-  }
-};
+// ABRIR MODAL DE INICIO DE SESIÓN
+showLoginModal();
 
 // FUNCION PARA PROCESAR COMPRA
 const processPurchase = (quantity) => {
@@ -456,46 +445,6 @@ const processPurchase = (quantity) => {
   sayBye(message);
 };
 
-// MENSAJE DE DESPEDIDA
-const sayBye = (message) => {
-  if (message) alert(message);
-  else alert("Muchas gracias por tu visita, esperamos verte pronto.");
-};
-
-// INICIAR LA SOLICITUD DE DATOS
-//nameRequest();
-
-// MOSTRAR/OCULTAR MODAL DE INICIO DE SESION
-const loginModal = new bootstrap.Modal(document.getElementById("loginModal"), {
-  backdrop: "static",
-  keyboard: false,
-});
-const showLoginModal = () => {
-  console.log("Abre Inicio Sesión");
-  loginModal.show();
-};
-const closeLoginModal = () => {
-  console.log("Cierra Inicio Sesión");
-  loginModal.hide();
-};
-
-// MOSTRAR/OCULTAR MODAL DE CREAR USUARIO
-const loginAddModal = new bootstrap.Modal(
-  document.getElementById("loginAddModal"),
-  {
-    backdrop: "static",
-    keyboard: false,
-  }
-);
-const showLoginAddModal = () => {
-  console.log("Abre Creación de Usuario");
-  loginAddModal.show();
-};
-const closeLoginAddModal = () => {
-  console.log("Cierra Creación de Usuario");
-  loginAddModal.hide();
-};
-
 const modifyQuantity = (id, quantity) => {
   shoppingCart.addProduct(id, quantity);
   // Renderizar los productos actualizados
@@ -513,4 +462,28 @@ const manageProductsWishList = (event, id) => {
   wishlist.manageProduct(id);
   // Renderizar los productos actualizados
   renderProducts(renderedType);
+};
+
+renderUserOptions = (userName) => {
+  // RENDERIZAR BOTON DE OPCIONES DE USUARIO
+  const userOptions = document.getElementById("user-options");
+  const optionsButton = userOptions.querySelector(".dropdown-toggle");
+  optionsButton.textContent = userName || "123";
+  userOptions.classList.remove("d-none");
+  // OCULTAR BOTONES DE INICIO DE SESIÓN Y CREAR USUARIO
+  const accountAdd = document.getElementById("account-add");
+  accountAdd.classList.add("d-none");
+  const account = document.getElementById("account");
+  account.classList.add("d-none");
+};
+
+renderLoginOptions = () => {
+  // OCULTAR BOTON DE OPCIONES DE USUARIO
+  const userOptions = document.getElementById("user-options");
+  userOptions.classList.add("d-none");
+  // MOSTRAR BOTONES DE INICIO DE SESIÓN Y CREAR USUARIO
+  const accountAdd = document.getElementById("account-add");
+  accountAdd.classList.remove("d-none");
+  const account = document.getElementById("account");
+  account.classList.remove("d-none");
 };
