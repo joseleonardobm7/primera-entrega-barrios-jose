@@ -464,7 +464,7 @@ const manageProductsWishList = (event, id) => {
   renderProducts(renderedType);
 };
 
-renderUserOptions = (userName) => {
+const renderUserOptions = (userName) => {
   // RENDERIZAR BOTON DE OPCIONES DE USUARIO
   const userOptions = document.getElementById("user-options");
   const optionsButton = userOptions.querySelector(".dropdown-toggle");
@@ -477,7 +477,7 @@ renderUserOptions = (userName) => {
   account.classList.add("d-none");
 };
 
-renderLoginOptions = () => {
+const renderLoginOptions = () => {
   // OCULTAR BOTON DE OPCIONES DE USUARIO
   const userOptions = document.getElementById("user-options");
   userOptions.classList.add("d-none");

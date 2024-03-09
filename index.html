@@ -43,8 +43,20 @@
                 href="#"
                 onclick="changeRenderedType('Todos')"
               >
-                Todos
+                Todos los Productos
               </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Categorias
+              </a>
+              <ul id="categories-container" class="dropdown-menu"></ul>
             </li>
             <li class="nav-item">
               <a
@@ -52,7 +64,7 @@
                 href="#"
                 onclick="changeRenderedType('Viveres')"
               >
-                Viveres
+                Más Vendidos
               </a>
             </li>
             <li class="nav-item">
@@ -61,16 +73,7 @@
                 href="#"
                 onclick="changeRenderedType('Frutas y Verduras')"
               >
-                Frutas y Verduras
-              </a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="#"
-                onclick="changeRenderedType('Bebidas')"
-              >
-                Bebidas
+                Mejores Valorados
               </a>
             </li>
           </ul>
@@ -209,7 +212,7 @@
       </div>
       <div
         id="products-container"
-        class="card-body d-flex justify-content-center align-items-start flex-wrap bgColorPrimary"
+        class="card-body d-flex justify-content-start align-self-stretch flex-wrap bgColorPrimary"
       ></div>
     </div>
     <!-- MODAL INICIO DE SESION -->
@@ -377,6 +380,6 @@
       integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
       crossorigin="anonymous"
     ></script>
-    <script src="assets/js/script.js"></script>
+    <script type="module" src="assets/js/index.js"></script>
   </body>
 </html>
